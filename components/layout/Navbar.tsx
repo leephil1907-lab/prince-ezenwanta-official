@@ -1,25 +1,128 @@
-import React from 'react'
+"use client";
+
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const navItems = [
+  { name: "Home", href: "/" },
+  { name: "Journey", href: "#journey" },
+  { name: "Music", href: "#music" },
+  { name: "Gallery", href: "#gallery" },
+  { name: "Events", href: "#events" },
+  { name: "Book", href: "#booking" },
+  { name: "Contact", href: "#contact" },
+];
 
 export default function Navbar() {
-  return (
-    <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 2rem', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-      <a href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-        <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <circle cx="32" cy="32" r="30" fill="#D4AF37" />
-          <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" fontFamily="Georgia, serif" fontSize="20" fill="#111">PE</text>
-        </svg>
-        <div style={{ marginLeft: 12 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>PRINCE EZENWANTA</div>
-          <div style={{ fontSize: 11, color: '#666' }}>The Voice of Igbo Heritage</div>
-        </div>
-      </a>
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-      <nav>
-        <a href="#music" style={{ marginRight: 16, textDecoration: 'none', color: 'inherit' }}>Music</a>
-        <a href="#gallery" style={{ marginRight: 16, textDecoration: 'none', color: 'inherit' }}>Gallery</a>
-        <a href="#events" style={{ marginRight: 16, textDecoration: 'none', color: 'inherit' }}>Events</a>
-        <a href="#booking" style={{ padding: '8px 12px', background: '#D4AF37', color: '#fff', borderRadius: 6, textDecoration: 'none' }}>Book</a>
-      </nav>
-    </header>
-  )
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 30);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <>
+      <header
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+          scrolled
+            ? "bg-black/80 backdrop-blur-xl border-b border-[#C8A045]/20"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
+
+          <Link href="/" className="flex items-center gap-3">
+
+            <div className="w-12 h-12 rounded-full border border-[#C8A045] flex items-center justify-center">
+
+              <span className="text-[#C8A045] text-xl font-bold">
+                PE
+              </span>
+
+            </div>
+
+            <div>
+
+              <h1 className="text-white font-bold text-lg">
+                Prince Ezenwanta
+              </h1>
+
+              <p className="text-xs text-[#C8A045]">
+                Official Website
+              </p>
+
+            </div>
+
+          </Link>
+
+          <nav className="hidden lg:flex gap-8 text-white">
+
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="hover:text-[#C8A045] transition"
+              >
+                {item.name}
+              </Link>
+            ))}
+
+          </nav>
+
+          <button
+            onClick={() => setOpen(!open)}
+            className="lg:hidden text-white"
+          >
+            {open ? <X size={30} /> : <Menu size={30} />}
+          </button>
+
+        </div>
+      </header>
+
+      <AnimatePresence>
+
+        {open && (
+
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: .4 }}
+            className="fixed inset-0 bg-[#090909] z-40 pt-32 px-10"
+          >
+
+            <div className="flex flex-col gap-8">
+
+              {navItems.map((item) => (
+
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="text-3xl text-white hover:text-[#C8A045]"
+                >
+                  {item.name}
+                </Link>
+
+              ))}
+
+            </div>
+
+          </motion.div>
+
+        )}
+
+      </AnimatePresence>
+
+    </>
+  );
 }
